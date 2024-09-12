@@ -1,0 +1,41 @@
+repos:
+- repo: https://github.com/Lucas-C/pre-commit-hooks
+  rev: v1.5.5
+  hooks:
+    - id: remove-crlf
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.6.0
+  hooks:
+    - id: trailing-whitespace
+    - id: end-of-file-fixer
+    - id: mixed-line-ending
+- repo: https://github.com/antonbabenko/pre-commit-terraform
+  rev: v1.95.0
+  hooks:
+    - id: terraform_checkov
+      args:
+        - --args=--soft-fail-on MEDIUM
+        - --args=--skip-check CKV_TF_1
+    - id: terraform_fmt
+    - id: terraform_validate
+      exclude: 'localmodules\/.*$'
+      args:
+        - --hook-config=--retry-once-with-cleanup=true
+    - id: terraform_docs
+      args:
+        - --args=--lockfile=false
+    - id: terraform_tflint
+      args:
+        - --args=--color
+        - --args=--call-module-type=all
+        - --args=--fix
+    - id: terraform_trivy
+      args:
+        - --args=--format=json
+        - --args=--skip-dirs="**/.terraform"
+        - --args=--ignorefile=__GIT_WORKING_DIR__/.trivyignore
+- repo: https://github.com/awslabs/cfn-python-lint
+  rev: v1.11.1 # The version of cfn-lint to use
+  hooks:
+    - id: cfn-python-lint
+      files: cfn/.*\.(json|yml|yaml)$
